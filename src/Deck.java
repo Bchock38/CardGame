@@ -12,6 +12,7 @@ public class Deck {
             }
         }
         cardsLeft = deck.size();
+        shuffle();
     }
 
     public boolean isEmpty(){
@@ -27,17 +28,24 @@ public class Deck {
 
     public Card deal(){
         if (deck.isEmpty()){
+            System.out.println("empty deck");
             return null;
         }
-        cardsLeft = cardsLeft -1;
+        cardsLeft = cardsLeft - 1;
+        do {
+            cardsLeft = cardsLeft - 1;
+        }
+        while (deck.get(cardsLeft).isInPlay() == true);
+        deck.get(cardsLeft).setInPlay(true);
         return deck.get(cardsLeft);
     }
     public void shuffle(){
-        for (int i = cardsLeft; i > 0; i--){
+        for (int i = cardsLeft-1; i > 0; i--){
             Card m = deck.get(i);
-            int spot = (int) (Math.random() * cardsLeft) + 1;
+            int spot = (int) (Math.random() * cardsLeft);
             deck.set(i, deck.get(spot));
             deck.set(spot, m);
         }
+        cardsLeft = deck.size();
     }
 }
