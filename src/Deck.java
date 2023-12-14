@@ -4,6 +4,7 @@ public class Deck {
 
     private ArrayList<Card> deck;
     private int cardsLeft;
+    //make card deck/put all cards into an arraylist
     public Deck(String[] ranks, String[] suit, int[] point){
         deck = new ArrayList<Card>();
         for (int i = 0; i < suit.length; i++){
@@ -12,9 +13,11 @@ public class Deck {
             }
         }
         cardsLeft = deck.size();
+        //shuffle deck
         shuffle();
     }
 
+    //check if deck is empty
     public boolean isEmpty(){
         if (cardsLeft == 0){
             return true;
@@ -22,10 +25,12 @@ public class Deck {
         return false;
     }
 
+    //return cards left in deck
     public int getCardsLeft() {
         return cardsLeft;
     }
 
+    //deal card from deck
     public Card deal(){
         if (deck.isEmpty()){
             System.out.println("empty deck");
@@ -35,9 +40,11 @@ public class Deck {
         while (deck.get(cardsLeft).isInPlay()){
             cardsLeft = cardsLeft - 1;
         }
+        //set card in game status tp true
         deck.get(cardsLeft).setInPlay(true);
         return deck.get(cardsLeft);
     }
+    //shuffle deck
     public void shuffle(){
         cardsLeft = deck.size();
         for (int i = cardsLeft-1; i > 0; i--){
