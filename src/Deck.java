@@ -32,20 +32,20 @@ public class Deck {
             return null;
         }
         cardsLeft = cardsLeft - 1;
-        do {
+        while (deck.get(cardsLeft).isInPlay()){
             cardsLeft = cardsLeft - 1;
         }
-        while (deck.get(cardsLeft).isInPlay() == true);
         deck.get(cardsLeft).setInPlay(true);
         return deck.get(cardsLeft);
     }
     public void shuffle(){
+        cardsLeft = deck.size();
         for (int i = cardsLeft-1; i > 0; i--){
             Card m = deck.get(i);
             int spot = (int) (Math.random() * cardsLeft);
             deck.set(i, deck.get(spot));
             deck.set(spot, m);
         }
-        cardsLeft = deck.size();
+
     }
 }
