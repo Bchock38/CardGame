@@ -5,19 +5,26 @@ public class Game {
 
 private Player[] players;
 
+private int currentPlayer;
+
 private Scanner input;
 
 private Deck r1;
 
+private CardViewer window;
+
 private boolean gameStatus;
+
+private int spoonsLeft;
 
 public Game() {
     input = new Scanner(System.in);
+    this.window = new CardViewer(this);
     //Make the deck of cards
     String[] ranks = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
-    String[] suits = {"Hearts", "Clubs", "Diamonds", "Spades"};
+    String[] suits = {"Spades", "Hearts", "Diamonds", "Clubs"};
     int[] values = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-    r1 = new Deck(ranks, suits, values);
+    r1 = new Deck(ranks, suits, values, window);
     gameStatus = true;
     //get the amount of players
     System.out.println("How many Players: ");
@@ -30,6 +37,7 @@ public Game() {
         String getName = input.nextLine();
         players[i] = new Player(getName);
     }
+    spoonsLeft = (numPlayers-1);
 
 }
     public static void main(String[] args) {
@@ -53,38 +61,78 @@ public Game() {
 
         public void playGame(){
             Card m = null;
-            for (int i = 0; i < players.length; i++){
-                //check for winner
-                if (checkWin(i)){
+            for (currentPlayer = 0; currentPlayer < players.length; currentPlayer++){
+                //check for winners
+//                if (spoonsLeft == 0 && players.length > 1){
+//                    gameStatus = false;
+//                    for(int i = 0; i < players.length; i++){
+//                        if (players[i].isHasSpoon() == false){
+//
+//                        }
+//                    }
+//                    break;
+//                }
+                //check for winners
+                if (spoonsLeft == 0 && players.length > 1){
+                    for(int i = 0; i < players.length; i++){
+                        if (players[i].isHasSpoon()){
+                            System.out.println(players[i].getName() + " Has Won");
+                        }
+                    }
                     gameStatus = false;
-                    System.out.println(players[i].getName() + " Wins");
                     break;
+                }
+                //check for winner if only one player
+                else if (players.length == 1){
+                    if (checkMatch(0)){
+                        System.out.println("You've Won");
+                        gameStatus = false;
+                        break;
+                    }
                 }
                 //check if deck is empty
                 if (r1.isEmpty()){
                     resetPile();
                 }
                 //deal card to first player
-                if (i == 0){
-                    players[i].addCard(r1.deal());
+                if (currentPlayer == 0 && players[currentPlayer].getHand().size() < 5){
+                    players[currentPlayer].addCard(r1.deal());
                 }
                 else{
-                //pass previous discarded card to next player
-                    players[i].addCard(m);
+                    if (m != null && players[currentPlayer].getHand().size() < 5) {
+                        //pass previous discarded card to next player
+                        players[currentPlayer].addCard(m);
+                    }
                 }
                 int toRemove;
                 //remove a card from player hand
                 do {
-                    System.out.print("Player " + players[i].getName());
-                    System.out.println(" Choose Which Number Card to Remove (ex. 1)");
-                    System.out.println(players[i].getHand());
+                    System.out.print("Player " + players[currentPlayer].getName());
+                    System.out.println(" Choose Which Position of Card to Remove (ex. 1)");
+                    System.out.println(players[currentPlayer].getHand());
+                    drawHand();
                     toRemove = input.nextInt();
                     input.nextLine();
                 }
-                while(toRemove > 5);
-                //set card status to no longer in game
-                players[i].getHand().get(toRemove-1).setInPlay(false);
-                m = players[i].getHand().remove(toRemove-1);
+                while(toRemove > 6 || toRemove < 1);
+                if (toRemove < 6) {
+                    //set card status to no longer in game
+                    players[currentPlayer].getHand().get(toRemove - 1).setInPlay(false);
+                    m = players[currentPlayer].getHand().remove(toRemove - 1);
+                }
+                else {
+                    if (checkMatch(currentPlayer)){
+                        players[currentPlayer].setSpoonStatus(true);
+                        spoonsLeft--;
+                    }
+                    else{
+                        System.out.println("No Match Can't Take Spoon");
+                        System.out.println("Turn Lost");
+                        if (currentPlayer != (players.length-1)) {
+                            players[currentPlayer + 1].addCard(r1.deal());
+                        }
+                    }
+                }
                 //clear screen
                 for (int j = 0; j < 10; j++){
                     System.out.println();
@@ -94,6 +142,9 @@ public Game() {
 
         }
 
+        public void takeTurn(){
+
+        }
         //reset pile
         public void resetPile(){
             System.out.println("Deck has been reset");
@@ -101,16 +152,31 @@ public Game() {
         }
 
         //check for winner
-        public boolean checkWin(int spot){
+//        public boolean checkWin(int spot){
+//
+//        }
+
+        public boolean checkMatch(int spot){
             ArrayList<Card> hand = players[spot].getHand();
-            int check = hand.get(0).getPoint();
-            for(int i = 1; i < hand.size(); i++){
-                if (hand.get(i).getPoint() != check){
-                    return false;
+            int check2 = 0;
+            for(int i = 0; i < hand.size(); i++) {
+                for (int j = 0; j < hand.size(); j++) {
+                    if (hand.get(i).getPoint() == hand.get(j).getPoint()) {
+                        check2++;
+                    }
+                }
+                if (check2 == 4) {
+                    System.out.println("Match");
+                    return true;
+                }
+                else{
+                    check2 = 0;
                 }
             }
-            return true;
+            System.out.println("No Match");
+            return false;
         }
+
 
         //deal cards to all players
         public void dealCards(){
@@ -122,4 +188,29 @@ public Game() {
 
             }
         }
+
+
+        public void resetGame(){
+
+            resetPile();
+            gameStatus = true;
+        }
+
+        public void drawHand(){
+            window.repaint();
+        }
+
+        public int getCurrentPlayer(){
+            return currentPlayer;
+        }
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public int getSpoonsLeft(){
+        return spoonsLeft;
+    }
+
+
 }

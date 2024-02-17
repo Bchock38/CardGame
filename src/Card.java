@@ -1,16 +1,24 @@
+import java.awt.*;
+
 public class Card {
     private String rank;
     private String suit;
     private int point;
+    private Image cardImage;
+
+    private CardViewer screen;
 
     private boolean inPlay;
 
-    public Card(String rank, String suit, int point){
+    public Card(String rank, String suit, int point, Image card, CardViewer a) {
+        this.screen = a;
         this.rank = rank;
         this.suit = suit;
         this.point = point;
+        cardImage = card;
         inPlay = false;
     }
+
 
     //return cards in play status
     public boolean isInPlay() {
@@ -50,6 +58,11 @@ public class Card {
     //set suit of card
     public void setSuit(String suit) {
         this.suit = suit;
+    }
+
+
+    public void draw(Graphics g, int position){
+        g.drawImage(cardImage, position, 600, 160,200,screen);
     }
 
     //pint out rank and suit of card

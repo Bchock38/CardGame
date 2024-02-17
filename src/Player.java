@@ -4,12 +4,15 @@ public class Player {
     private ArrayList<Card> hand;
     private int points;
 
+    private boolean hasSpoon;
+
     private String name;
 
     public Player(String name){
         points = 0;
         this.name = name;
         hand = new ArrayList<Card>();
+        hasSpoon = false;
     }
     public Player(String name, ArrayList<Card> hand){
         this.name = name;
@@ -29,6 +32,14 @@ public class Player {
     //return player's hand of cards
     public ArrayList<Card> getHand() {
         return hand;
+    }
+
+    public boolean isHasSpoon(){
+        return hasSpoon;
+    }
+
+    public void setSpoonStatus(boolean status){
+        hasSpoon = status;
     }
 
     //add points to player

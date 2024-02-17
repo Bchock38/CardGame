@@ -1,15 +1,26 @@
+import javax.swing.*;
 import java.util.ArrayList;
+import java.awt.*;
 
 public class Deck {
 
     private ArrayList<Card> deck;
+
+    private CardViewer screen;
     private int cardsLeft;
     //make card deck/put all cards into an arraylist
-    public Deck(String[] ranks, String[] suit, int[] point){
+    public Deck(String[] ranks, String[] suit, int[] point, CardViewer a){
+
+
+        screen = a;
         deck = new ArrayList<Card>();
+        int placement;
         for (int i = 0; i < suit.length; i++){
+            placement = i+1;
             for (int j = 0; j < ranks.length; j++){
-                  deck.add(new Card(ranks[j],suit[i],point[j]));
+                String filename = "Resources/Cards/" + ((j*4)+placement) +".png";
+                Image image = new ImageIcon(filename).getImage();
+                deck.add(new Card(ranks[j],suit[i],point[j], image, screen));
             }
         }
         cardsLeft = deck.size();
@@ -29,6 +40,7 @@ public class Deck {
     public int getCardsLeft() {
         return cardsLeft;
     }
+
 
     //deal card from deck
     public Card deal(){
@@ -54,5 +66,9 @@ public class Deck {
             deck.set(spot, m);
         }
 
+    }
+
+    public ArrayList<Card> getDeck(){
+        return deck;
     }
 }
