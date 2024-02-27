@@ -12,8 +12,11 @@ public class CardViewer extends JFrame {
 
     private Image spoon;
 
+    private String text;
+
     public CardViewer(Game a){
         this.a = a;
+        text = "";
         spoon = new ImageIcon( "Resources/Spoon.jpg").getImage();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setTitle("Spoons");
@@ -22,18 +25,22 @@ public class CardViewer extends JFrame {
 
     }
 
+    public void setText(String text){
+        this.text = text;
+    }
 
     public void paint(Graphics g) {
         g.setColor(Color.white);
         g.fillRect(0,0,WINDOW_HEIGHT,WINDOW_WIDTH);
         g.setColor(Color.black);
-        Player[] players = a.getPlayers();
+        g.drawString(text,400,500);
+        ArrayList<Player> players = a.getPlayers();
         for (int i = 0; i< a.getSpoonsLeft(); i++) {
             g.drawImage(spoon, (i + 4) * 100, 200,100,140, this);
         }
         if (players != null) {
             int currentPlayer = a.getCurrentPlayer();
-            ArrayList<Card> hand = players[currentPlayer].getHand();
+            ArrayList<Card> hand = players.get(currentPlayer).getHand();
             for (int i = 0; i < hand.size(); i++) {
                 hand.get(i).draw(g, (i + 4) * 100);
             }
